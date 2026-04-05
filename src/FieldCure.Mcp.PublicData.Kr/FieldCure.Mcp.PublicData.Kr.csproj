@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FieldCure.Mcp.PublicData.Kr</RootNamespace>
+    <AssemblyName>fieldcure-mcp-publicdata-kr</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <Version>0.1.0</Version>
+    <PackageId>FieldCure.Mcp.PublicData.Kr</PackageId>
+
+    <Authors>Jong Hyun Kim</Authors>
+    <Company>Fieldcure Co., Ltd.</Company>
+    <Copyright>Copyright (c) 2026 Fieldcure Co., Ltd.</Copyright>
+    <Description>Korean public data MCP server — discover, describe, and call data.go.kr APIs with automatic serviceKey injection, XML-to-JSON conversion, and error mapping.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/fieldcure/fieldcure-mcp-publicdata</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fieldcure/fieldcure-mcp-publicdata</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>mcp;public-data;data-go-kr;korea;openapi</PackageTags>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>Logo.png</PackageIcon>
+    <PackageReleaseNotes>v0.1.0: Initial release — discover_api, describe_api, call_api tools for data.go.kr.</PackageReleaseNotes>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>fieldcure-mcp-publicdata-kr</ToolCommandName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="" />
+    <None Include="Logo.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="FieldCure.Mcp.PublicData.Kr.Tests" />
+  </ItemGroup>
+
+</Project>
