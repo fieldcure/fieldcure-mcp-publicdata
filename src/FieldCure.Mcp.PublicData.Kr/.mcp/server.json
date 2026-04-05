@@ -2,11 +2,19 @@
   "$schema": "https://modelcontextprotocol.io/schemas/draft/2025-07-09/server.json",
   "name": "io.github.fieldcure/publicdata-kr",
   "description": "Korean public data API gateway — discover, describe, and call 80,000+ data.go.kr APIs with automatic serviceKey injection, XML-to-JSON conversion, and error mapping.",
+  "display_name": "한국 공공데이터",
+  "keywords": [
+    "공공데이터", "정부", "data.go.kr", "기상", "부동산", "사업자",
+    "세금", "건강보험", "법령", "public data", "korea", "government"
+  ],
   "packages": [
     {
       "registry_name": "nuget",
       "name": "FieldCure.Mcp.PublicData.Kr",
       "version": "0.1.0",
+      "runtime": "dotnet",
+      "source": "DotnetTool",
+      "command": "fieldcure-mcp-publicdata-kr",
       "environment_variables": [
         {
           "name": "PUBLICDATA_API_KEY",
@@ -24,6 +32,14 @@
           "required": false
         }
       ]
+    }
+  ],
+  "required_credentials": [
+    {
+      "env_key": "PUBLICDATA_API_KEY",
+      "display_name": "공공데이터포털 API 키",
+      "help_text": "https://www.data.go.kr 에서 회원가입 후 마이페이지에서 인증키를 발급받으세요.",
+      "required": true
     }
   ],
   "repository": {
