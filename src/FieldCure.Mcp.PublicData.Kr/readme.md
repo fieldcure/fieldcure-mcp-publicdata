@@ -82,12 +82,14 @@ Settings → MCP Servers → Add Server:
 
 | Package | Description |
 |---------|-------------|
-| **[FieldCure.Mcp.PublicData.Kr](https://github.com/fieldcure/fieldcure-mcp-publicdata)** | Korean public data API gateway (data.go.kr) |
 | [FieldCure.Mcp.Essentials](https://github.com/fieldcure/fieldcure-mcp-essentials) | Web search, HTTP, shell, JavaScript, file I/O, memory (10 tools) |
 | [FieldCure.Mcp.Outbox](https://github.com/fieldcure/fieldcure-mcp-outbox) | Multi-channel messaging: SMTP, Slack, Telegram, KakaoTalk |
 | [FieldCure.Mcp.Filesystem](https://github.com/fieldcure/fieldcure-mcp-filesystem) | File management with document parsing (DOCX, HWPX, XLSX, PDF) |
 | [FieldCure.Mcp.Rag](https://github.com/fieldcure/fieldcure-mcp-rag) | Semantic search with bilingual keyword generation |
-| [AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio-runner) | Multi-provider AI workspace — use all MCP servers together |
+| [FieldCure.Mcp.PublicData.Kr](https://github.com/fieldcure/fieldcure-mcp-publicdata) | Korean public data API gateway — data.go.kr (80,000+ APIs) |
+| [AssistStudio Runner](https://github.com/fieldcure/fieldcure-assiststudio-runner) | Headless LLM task automation — schedule and execute with any provider |
+| [FieldCure.DocumentParsers](https://github.com/fieldcure/fieldcure-document-parsers) | Document text extraction: DOCX, HWPX, XLSX, PPTX, PDF with math-to-LaTeX |
+| [AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio) | Multi-provider AI workspace for Windows (WinUI 3) |
 
 ## Links
 
