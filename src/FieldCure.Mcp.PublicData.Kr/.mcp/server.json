@@ -1,0 +1,36 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/draft/2025-07-09/server.json",
+  "name": "io.github.fieldcure/publicdata-kr",
+  "description": "Korean public data API gateway — discover, describe, and call 80,000+ data.go.kr APIs with automatic serviceKey injection, XML-to-JSON conversion, and error mapping.",
+  "packages": [
+    {
+      "registry_name": "nuget",
+      "name": "FieldCure.Mcp.PublicData.Kr",
+      "version": "0.1.0",
+      "environment_variables": [
+        {
+          "name": "PUBLICDATA_API_KEY",
+          "description": "data.go.kr API key (https://www.data.go.kr 회원가입 후 인증키 발급)",
+          "required": true
+        },
+        {
+          "name": "PUBLICDATA_TIMEOUT_SECONDS",
+          "description": "Per-request timeout in seconds (default: 30)",
+          "required": false
+        },
+        {
+          "name": "PUBLICDATA_MAX_RESPONSE_LENGTH",
+          "description": "Maximum response body length in characters (default: 50000)",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/fieldcure/fieldcure-mcp-publicdata",
+    "source": "github"
+  },
+  "version_detail": {
+    "version": "0.1.0"
+  }
+}

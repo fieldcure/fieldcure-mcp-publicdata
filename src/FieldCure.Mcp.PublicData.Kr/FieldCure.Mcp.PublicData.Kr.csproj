@@ -19,7 +19,8 @@
     <PackageProjectUrl>https://github.com/fieldcure/fieldcure-mcp-publicdata</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fieldcure/fieldcure-mcp-publicdata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>mcp;public-data;data-go-kr;korea;openapi</PackageTags>
+    <PackageTags>mcp;mcp-server;public-data;data-go-kr;korea;openapi;government</PackageTags>
+    <PackageType>McpServer</PackageType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>Logo.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/fieldcure/fieldcure-mcp-publicdata/blob/main/RELEASENOTES.md</PackageReleaseNotes>
@@ -36,6 +37,7 @@
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="" />
     <None Include="Logo.png" Pack="true" PackagePath="" />
+    <None Include=".mcp/server.json" Pack="true" PackagePath=".mcp/" />
   </ItemGroup>
 
   <ItemGroup>
