@@ -22,7 +22,7 @@
     <PackageTags>mcp;public-data;data-go-kr;korea;openapi</PackageTags>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>Logo.png</PackageIcon>
-    <PackageReleaseNotes>v0.1.0: Initial release — discover_api, describe_api, call_api tools for data.go.kr.</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/fieldcure/fieldcure-mcp-publicdata/blob/main/RELEASENOTES.md</PackageReleaseNotes>
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fieldcure-mcp-publicdata-kr</ToolCommandName>
