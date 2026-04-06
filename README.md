@@ -105,15 +105,15 @@ Add to `.vscode/mcp.json`:
 
 ### AssistStudio
 
-Settings > MCP Servers > **서버 추가**:
+Settings > MCP Servers > **Add Server**:
 
 | Field | Value |
 |-------|-------|
-| **서버 이름** | `PublicData.Kr` |
+| **Name** | `PublicData.Kr` |
 | **Command** | `fieldcure-mcp-publicdata-kr` |
-| **Arguments** | *(비워둠)* |
-| **환경변수** | `PUBLICDATA_API_KEY` = data.go.kr 인증키 |
-| **Description** | *(비워두면 서버 연결 시 자동으로 채워집니다)* |
+| **Arguments** | *(empty)* |
+| **Environment** | `PUBLICDATA_API_KEY` = your data.go.kr API key |
+| **Description** | *(auto-filled on first connection)* |
 
 ## Tools
 
