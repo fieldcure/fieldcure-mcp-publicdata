@@ -34,6 +34,8 @@ builder.Services
         options.ServerInfo = new()
         {
             Name = "fieldcure-mcp-publicdata-kr",
+            Title = "FieldCure PublicData.Kr",
+            Description = "Korean public data gateway — data.go.kr (80,000+ APIs)",
             Version = typeof(Program).Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                 ?.InformationalVersion ?? "0.0.0",

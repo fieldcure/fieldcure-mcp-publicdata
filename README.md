@@ -1,4 +1,4 @@
-# FieldCure MCP PublicData.Kr
+﻿# FieldCure MCP PublicData.Kr
 
 [![NuGet](https://img.shields.io/nuget/v/FieldCure.Mcp.PublicData.Kr)](https://www.nuget.org/packages/FieldCure.Mcp.PublicData.Kr)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/fieldcure/fieldcure-mcp-publicdata/blob/main/LICENSE)
@@ -102,6 +102,18 @@ Add to `.vscode/mcp.json`:
   }
 }
 ```
+
+### AssistStudio
+
+Settings > MCP Servers > **서버 추가**:
+
+| Field | Value |
+|-------|-------|
+| **서버 이름** | `PublicData.Kr` |
+| **Command** | `fieldcure-mcp-publicdata-kr` |
+| **Arguments** | *(비워둠)* |
+| **환경변수** | `PUBLICDATA_API_KEY` = data.go.kr 인증키 |
+| **Description** | *(비워두면 서버 연결 시 자동으로 채워집니다)* |
 
 ## Tools
 
@@ -211,18 +223,35 @@ dotnet test
 dotnet pack src/FieldCure.Mcp.PublicData.Kr -c Release
 ```
 
-## See Also — FieldCure MCP Ecosystem
+## See Also — AssistStudio Ecosystem
+
+### MCP Servers
 
 | Package | Description |
 |---------|-------------|
-| [FieldCure.Mcp.Essentials](https://github.com/fieldcure/fieldcure-mcp-essentials) | Web search, HTTP, shell, JavaScript, file I/O, memory (10 tools) |
-| [FieldCure.Mcp.Outbox](https://github.com/fieldcure/fieldcure-mcp-outbox) | Multi-channel messaging: SMTP, Slack, Telegram, KakaoTalk |
-| [FieldCure.Mcp.Filesystem](https://github.com/fieldcure/fieldcure-mcp-filesystem) | File management with document parsing (DOCX, HWPX, XLSX, PDF) |
-| [FieldCure.Mcp.Rag](https://github.com/fieldcure/fieldcure-mcp-rag) | Semantic search with bilingual keyword generation |
-| [FieldCure.Mcp.PublicData.Kr](https://github.com/fieldcure/fieldcure-mcp-publicdata) | Korean public data API gateway — data.go.kr (80,000+ APIs) |
-| [AssistStudio Runner](https://github.com/fieldcure/fieldcure-assiststudio-runner) | Headless LLM task automation — schedule and execute with any provider |
-| [FieldCure.DocumentParsers](https://github.com/fieldcure/fieldcure-document-parsers) | Document text extraction: DOCX, HWPX, XLSX, PPTX, PDF with math-to-LaTeX |
-| [AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio) | Multi-provider AI workspace for Windows (WinUI 3) |
+| [FieldCure.Mcp.Essentials](https://www.nuget.org/packages/FieldCure.Mcp.Essentials) | HTTP, web search (Bing/Serper/Tavily), shell, JavaScript, file I/O, persistent memory |
+| [FieldCure.Mcp.Outbox](https://www.nuget.org/packages/FieldCure.Mcp.Outbox) | Multi-channel messaging — Slack, Telegram, Email (SMTP/Graph), KakaoTalk |
+| [FieldCure.Mcp.Filesystem](https://www.nuget.org/packages/FieldCure.Mcp.Filesystem) | Sandboxed file/directory operations with built-in document parsing (DOCX, HWPX, XLSX, PDF) |
+| [FieldCure.Mcp.Rag](https://www.nuget.org/packages/FieldCure.Mcp.Rag) | Document search — hybrid BM25 + vector retrieval, multi-KB, incremental indexing |
+| [FieldCure.Mcp.PublicData.Kr](https://www.nuget.org/packages/FieldCure.Mcp.PublicData.Kr) | Korean public data gateway — data.go.kr (80,000+ APIs) |
+| [FieldCure.AssistStudio.Runner](https://www.nuget.org/packages/FieldCure.AssistStudio.Runner) | Headless LLM task runner with scheduling via Windows Task Scheduler |
+
+### Libraries
+
+| Package | Description |
+|---------|-------------|
+| [FieldCure.Ai.Providers](https://www.nuget.org/packages/FieldCure.Ai.Providers) | Multi-provider AI client — Claude, OpenAI, Gemini, Ollama, Groq with streaming and tool use |
+| [FieldCure.Ai.Execution](https://www.nuget.org/packages/FieldCure.Ai.Execution) | Agent loop and sub-agent execution engine for autonomous tool-use workflows |
+| [FieldCure.AssistStudio.Core](https://www.nuget.org/packages/FieldCure.AssistStudio.Core) | MCP server management, tool orchestration, and conversation persistence |
+| [FieldCure.AssistStudio.Controls.WinUI](https://www.nuget.org/packages/FieldCure.AssistStudio.Controls.WinUI) | WinUI 3 chat UI controls — WebView2 rendering, streaming, conversation branching |
+| [FieldCure.DocumentParsers](https://www.nuget.org/packages/FieldCure.DocumentParsers) | Document text extraction — DOCX, HWPX, XLSX, PPTX with math-to-LaTeX |
+| [FieldCure.DocumentParsers.Pdf](https://www.nuget.org/packages/FieldCure.DocumentParsers.Pdf) | PDF text extraction add-on for DocumentParsers |
+
+### App
+
+| Package | Description |
+|---------|-------------|
+| [FieldCure.AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio) | Multi-provider AI workspace for Windows (WinUI 3) |
 
 ## License
 
