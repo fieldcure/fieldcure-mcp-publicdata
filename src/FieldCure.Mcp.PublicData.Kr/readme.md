@@ -58,13 +58,15 @@ dotnet tool install -g FieldCure.Mcp.PublicData.Kr
 
 ### AssistStudio
 
-Settings → MCP Servers → Add Server:
+Settings > MCP Servers > **서버 추가**:
 
 | Field | Value |
 |-------|-------|
-| Name | 한국 공공데이터 |
-| Command | `fieldcure-mcp-publicdata-kr` |
-| Environment | `PUBLICDATA_API_KEY` = your key |
+| **서버 이름** | `PublicData.Kr` |
+| **Command** | `fieldcure-mcp-publicdata-kr` |
+| **Arguments** | *(비워둠)* |
+| **환경변수** | `PUBLICDATA_API_KEY` = data.go.kr 인증키 |
+| **Description** | *(비워두면 서버 연결 시 자동으로 채워집니다)* |
 
 ## Configuration
 
@@ -78,18 +80,17 @@ Settings → MCP Servers → Add Server:
 
 - [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 
-## See Also — FieldCure MCP Ecosystem
+## See Also — AssistStudio Ecosystem
 
 | Package | Description |
 |---------|-------------|
-| [FieldCure.Mcp.Essentials](https://github.com/fieldcure/fieldcure-mcp-essentials) | Web search, HTTP, shell, JavaScript, file I/O, memory (10 tools) |
-| [FieldCure.Mcp.Outbox](https://github.com/fieldcure/fieldcure-mcp-outbox) | Multi-channel messaging: SMTP, Slack, Telegram, KakaoTalk |
-| [FieldCure.Mcp.Filesystem](https://github.com/fieldcure/fieldcure-mcp-filesystem) | File management with document parsing (DOCX, HWPX, XLSX, PDF) |
-| [FieldCure.Mcp.Rag](https://github.com/fieldcure/fieldcure-mcp-rag) | Semantic search with bilingual keyword generation |
-| [FieldCure.Mcp.PublicData.Kr](https://github.com/fieldcure/fieldcure-mcp-publicdata) | Korean public data API gateway — data.go.kr (80,000+ APIs) |
-| [AssistStudio Runner](https://github.com/fieldcure/fieldcure-assiststudio-runner) | Headless LLM task automation — schedule and execute with any provider |
-| [FieldCure.DocumentParsers](https://github.com/fieldcure/fieldcure-document-parsers) | Document text extraction: DOCX, HWPX, XLSX, PPTX, PDF with math-to-LaTeX |
-| [AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio) | Multi-provider AI workspace for Windows (WinUI 3) |
+| [FieldCure.Mcp.Essentials](https://www.nuget.org/packages/FieldCure.Mcp.Essentials) | HTTP, web search (Bing/Serper/Tavily), shell, JavaScript, file I/O, persistent memory |
+| [FieldCure.Mcp.Outbox](https://www.nuget.org/packages/FieldCure.Mcp.Outbox) | Multi-channel messaging — Slack, Telegram, Email (SMTP/Graph), KakaoTalk |
+| [FieldCure.Mcp.Filesystem](https://www.nuget.org/packages/FieldCure.Mcp.Filesystem) | Sandboxed file/directory operations with built-in document parsing (DOCX, HWPX, XLSX, PDF) |
+| [FieldCure.Mcp.Rag](https://www.nuget.org/packages/FieldCure.Mcp.Rag) | Document search — hybrid BM25 + vector retrieval, multi-KB, incremental indexing |
+| [FieldCure.Mcp.PublicData.Kr](https://www.nuget.org/packages/FieldCure.Mcp.PublicData.Kr) | Korean public data gateway — data.go.kr (80,000+ APIs) |
+| [FieldCure.AssistStudio.Runner](https://www.nuget.org/packages/FieldCure.AssistStudio.Runner) | Headless LLM task runner with scheduling via Windows Task Scheduler |
+| [FieldCure.AssistStudio](https://github.com/fieldcure/fieldcure-assiststudio) | Multi-provider AI workspace for Windows (WinUI 3) |
 
 ## Links
 
