@@ -225,7 +225,7 @@ dotnet pack src/FieldCure.Mcp.PublicData.Kr -c Release
 
 ## See Also
 
-Part of the [AssistStudio ecosystem](https://github.com/fieldcure/fieldcure-assiststudio#ecosystem).
+Part of the [AssistStudio ecosystem](https://github.com/fieldcure/fieldcure-assiststudio#packages).
 
 ## License
 
