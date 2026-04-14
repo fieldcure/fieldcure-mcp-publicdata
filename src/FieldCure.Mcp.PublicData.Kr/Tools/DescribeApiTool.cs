@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using FieldCure.Mcp.PublicData.Kr.Services;
 using ModelContextProtocol.Server;
 
@@ -14,16 +13,6 @@ namespace FieldCure.Mcp.PublicData.Kr.Tools;
 [McpServerToolType]
 public static class DescribeApiTool
 {
-    /// <summary>
-    /// Shared JSON serialization options.
-    /// </summary>
-    static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    };
-
     /// <summary>
     /// Gets the request parameters and response schema of a specific data.go.kr API.
     /// </summary>
@@ -46,11 +35,11 @@ public static class DescribeApiTool
         }
         catch (OperationCanceledException)
         {
-            return JsonSerializer.Serialize(new { error = "Request timed out." }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = "Request timed out." }, McpJson.Options);
         }
         catch (Exception ex)
         {
-            return JsonSerializer.Serialize(new { error = ex.Message }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = ex.Message }, McpJson.Options);
         }
     }
 
@@ -62,7 +51,7 @@ public static class DescribeApiTool
     {
         var root = JsonNode.Parse(rawJson);
         if (root is null)
-            return JsonSerializer.Serialize(new { error = "Failed to parse catalog response" }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = "Failed to parse catalog response" }, McpJson.Options);
 
         var data = root["data"]?.AsArray();
         if (data is null || data.Count == 0)
@@ -71,7 +60,7 @@ public static class DescribeApiTool
             {
                 error = $"No API found with serviceId '{serviceId}'. " +
                         "Use discover_api to search for available APIs.",
-            }, JsonOptions);
+            }, McpJson.Options);
         }
 
         // All entries share the same list-level metadata
@@ -113,7 +102,7 @@ public static class DescribeApiTool
             dataFormat,
             guideUrl,
             operations,
-        }, JsonOptions);
+        }, McpJson.Options);
     }
 
     /// <summary>

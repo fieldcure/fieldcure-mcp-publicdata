@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using FieldCure.Mcp.PublicData.Kr.Services;
 using ModelContextProtocol.Server;
 
@@ -13,16 +12,6 @@ namespace FieldCure.Mcp.PublicData.Kr.Tools;
 [McpServerToolType]
 public static class CallApiTool
 {
-    /// <summary>
-    /// Shared JSON serialization options.
-    /// </summary>
-    static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    };
-
     /// <summary>
     /// Calls a Korean public data API with automatic serviceKey injection.
     /// </summary>
@@ -46,7 +35,7 @@ public static class CallApiTool
             // Validate URL against domain whitelist
             var (uri, urlError) = DomainWhitelist.Validate(url);
             if (uri is null)
-                return JsonSerializer.Serialize(new { error = urlError }, JsonOptions);
+                return JsonSerializer.Serialize(new { error = urlError }, McpJson.Options);
 
             // Parse query params from JSON string
             Dictionary<string, string>? queryParams = null;
@@ -60,7 +49,7 @@ public static class CallApiTool
                 {
                     return JsonSerializer.Serialize(
                         new { error = "Invalid params JSON. Expected a flat object with string values." },
-                        JsonOptions);
+                        McpJson.Options);
                 }
             }
 
@@ -71,15 +60,15 @@ public static class CallApiTool
         }
         catch (OperationCanceledException)
         {
-            return JsonSerializer.Serialize(new { error = "Request timed out." }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = "Request timed out." }, McpJson.Options);
         }
         catch (HttpRequestException ex)
         {
-            return JsonSerializer.Serialize(new { error = $"HTTP error: {ex.Message}" }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = $"HTTP error: {ex.Message}" }, McpJson.Options);
         }
         catch (Exception ex)
         {
-            return JsonSerializer.Serialize(new { error = ex.Message }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = ex.Message }, McpJson.Options);
         }
     }
 }

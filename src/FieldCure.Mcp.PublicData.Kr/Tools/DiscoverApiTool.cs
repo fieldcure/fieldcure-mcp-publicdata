@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using FieldCure.Mcp.PublicData.Kr.Services;
 using ModelContextProtocol.Server;
 
@@ -14,16 +13,6 @@ namespace FieldCure.Mcp.PublicData.Kr.Tools;
 [McpServerToolType]
 public static class DiscoverApiTool
 {
-    /// <summary>
-    /// Shared JSON serialization options.
-    /// </summary>
-    static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    };
-
     /// <summary>
     /// Searches Korean public data APIs on data.go.kr by keyword.
     /// </summary>
@@ -55,11 +44,11 @@ public static class DiscoverApiTool
         }
         catch (OperationCanceledException)
         {
-            return JsonSerializer.Serialize(new { error = "Request timed out." }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = "Request timed out." }, McpJson.Options);
         }
         catch (Exception ex)
         {
-            return JsonSerializer.Serialize(new { error = ex.Message }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = ex.Message }, McpJson.Options);
         }
     }
 
@@ -70,7 +59,7 @@ public static class DiscoverApiTool
     {
         var root = JsonNode.Parse(rawJson);
         if (root is null)
-            return JsonSerializer.Serialize(new { error = "Failed to parse catalog response" }, JsonOptions);
+            return JsonSerializer.Serialize(new { error = "Failed to parse catalog response" }, McpJson.Options);
 
         var totalCount = root["totalCount"]?.GetValue<int>() ?? 0;
         var data = root["data"]?.AsArray();
@@ -81,7 +70,7 @@ public static class DiscoverApiTool
             {
                 total_count = totalCount,
                 results = Array.Empty<object>(),
-            }, JsonOptions);
+            }, McpJson.Options);
         }
 
         // De-duplicate by list_id — keep first occurrence
@@ -113,6 +102,6 @@ public static class DiscoverApiTool
         {
             total_count = totalCount,
             results,
-        }, JsonOptions);
+        }, McpJson.Options);
     }
 }

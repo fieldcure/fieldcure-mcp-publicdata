@@ -172,7 +172,7 @@ static class ResponseNormalizer
             totalCount = totalCount ?? items.Count,
             items = trimmed,
             truncated = items.Count > maxResults,
-        }, new JsonSerializerOptions { WriteIndented = true });
+        }, McpJson.Indented);
     }
 
     /// <summary>
@@ -198,7 +198,7 @@ static class ResponseNormalizer
             }
         }
 
-        return JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(dict, McpJson.Indented);
     }
 
     /// <summary>
@@ -254,7 +254,7 @@ static class ResponseNormalizer
             if (page is not null)
                 result["page"] = page;
 
-            return result.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+            return result.ToJsonString(McpJson.Indented);
         }
 
         // Handle old-style: { response: { header, body: { items: { item: [...] } } } }
@@ -305,7 +305,7 @@ static class ResponseNormalizer
                         ["items"] = trimmed,
                         ["truncated"] = wasTruncated,
                     };
-                    return result.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+                    return result.ToJsonString(McpJson.Indented);
                 }
 
                 // Single item (not array)
@@ -317,12 +317,12 @@ static class ResponseNormalizer
                         ["items"] = new JsonArray { singleItem.DeepClone() },
                         ["truncated"] = false,
                     };
-                    return result.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+                    return result.ToJsonString(McpJson.Indented);
                 }
             }
         }
 
         // Fallback: return pretty-printed
-        return root.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+        return root.ToJsonString(McpJson.Indented);
     }
 }
