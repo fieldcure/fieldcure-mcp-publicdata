@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.2.0 (2026-04-14)
+
+### Changed
+
+- **Centralize `JsonSerializerOptions`** — extract shared `McpJson.Options` to eliminate per-tool serializer configuration duplication
+- **Docs** — inline `PackageReleaseNotes` in csproj, rename Ecosystem section, add GitHub Releases workflow
+
+---
+
 ## v0.1.0 (2026-04-05)
 
 Initial release.
