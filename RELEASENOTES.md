@@ -1,5 +1,29 @@
 # Release Notes
 
+## v1.0.0 (2026-04-18)
+
+**ADR-001 Phase 1: Lazy credential resolution.** Pilot implementation of the FieldCure MCP credential management ADR. Non-breaking for existing users who set an env var.
+
+### Added
+
+- **`ApiKeyResolver`** service — resolves the `serviceKey` via the priority chain: CLI arg (`--api-key`, debug only) → `DATA_GO_KR_API_KEY` env var → `PUBLICDATA_API_KEY` legacy env var → **MCP Elicitation** (spec 2025-06-18+) → soft-fail. The resolved key is cached in process memory for the session; it is never persisted to disk by the server.
+- **`InvalidApiKeyException`** — thrown by the HTTP client on upstream 401/403 so tools can trigger cache invalidation and a single retry.
+- **`KeyedCall`** helper — wraps tool invocations with the resolve → run → (on invalid key) invalidate + retry loop. Session-level re-elicit cap of 2 prevents loops.
+- **Soft-fail path** — the server no longer aborts startup when no key is configured. `tools/list` always responds; per-tool calls return a structured error pointing at `DATA_GO_KR_API_KEY` and noting the Elicitation fallback.
+
+### Changed
+
+- **Env var rename**: `PUBLICDATA_API_KEY` → `DATA_GO_KR_API_KEY` (canonical name matching external Korean government API conventions). The legacy name continues to work as a fallback and is documented as such in `.mcp/server.json` and README.
+- **`PublicDataHttpClient`** no longer owns the API key. Each public method accepts an `apiKey` parameter supplied by the caller (resolved via `ApiKeyResolver`). The client throws `InvalidApiKeyException` on HTTP 401/403.
+- **`Program.cs`** — removed the `throw new InvalidOperationException("PUBLICDATA_API_KEY is required")` guard. Startup only reads `--api-key` as an optional seed for the resolver; env var and Elicitation are evaluated lazily at tool call time.
+- **Package version** bumped to **1.0.0** (initial release on the ADR-001 credential management strategy).
+
+### Migration
+
+Existing users who had set `PUBLICDATA_API_KEY` need no action — the legacy env var continues to be read. To adopt the canonical name, rename to `DATA_GO_KR_API_KEY`. Hosts that support MCP Elicitation (e.g. AssistStudio) may skip env var configuration entirely; the server will request the key on first tool use.
+
+---
+
 ## v0.2.0 (2026-04-14)
 
 ### Changed

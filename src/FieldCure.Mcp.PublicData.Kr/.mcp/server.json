@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://modelcontextprotocol.io/schemas/draft/2025-07-09/server.json",
   "name": "io.github.fieldcure/publicdata-kr",
   "description": "Korean public data API gateway — discover, describe, and call 80,000+ data.go.kr APIs with automatic serviceKey injection, XML-to-JSON conversion, and error mapping.",
@@ -11,15 +11,20 @@
     {
       "registry_name": "nuget",
       "name": "FieldCure.Mcp.PublicData.Kr",
-      "version": "0.2.0",
+      "version": "1.0.0",
       "runtime": "dotnet",
       "source": "DotnetTool",
       "command": "fieldcure-mcp-publicdata-kr",
       "environment_variables": [
         {
+          "name": "DATA_GO_KR_API_KEY",
+          "description": "data.go.kr API key (https://www.data.go.kr 회원가입 후 인증키 발급). If unset, the server will request the key via MCP Elicitation on first tool call (requires an Elicitation-capable client).",
+          "required": false
+        },
+        {
           "name": "PUBLICDATA_API_KEY",
-          "description": "data.go.kr API key (https://www.data.go.kr 회원가입 후 인증키 발급)",
-          "required": true
+          "description": "Legacy env var name for data.go.kr API key. Retained for backward compatibility; prefer DATA_GO_KR_API_KEY.",
+          "required": false
         },
         {
           "name": "PUBLICDATA_TIMEOUT_SECONDS",
@@ -36,10 +41,10 @@
   ],
   "required_credentials": [
     {
-      "env_key": "PUBLICDATA_API_KEY",
+      "env_key": "DATA_GO_KR_API_KEY",
       "display_name": "공공데이터포털 API 키",
-      "help_text": "https://www.data.go.kr 에서 회원가입 후 마이페이지에서 인증키를 발급받으세요.",
-      "required": true
+      "help_text": "https://www.data.go.kr 에서 회원가입 후 마이페이지에서 인증키를 발급받으세요. 환경변수가 없으면 MCP Elicitation을 지원하는 클라이언트에서는 첫 도구 호출 시 입력 UI가 뜹니다.",
+      "required": false
     }
   ],
   "repository": {
@@ -47,6 +52,6 @@
     "source": "github"
   },
   "version_detail": {
-    "version": "0.2.0"
+    "version": "1.0.0"
   }
 }

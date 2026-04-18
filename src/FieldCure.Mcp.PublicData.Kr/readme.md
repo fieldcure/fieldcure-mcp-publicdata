@@ -1,4 +1,4 @@
-# FieldCure.Mcp.PublicData.Kr
+﻿# FieldCure.Mcp.PublicData.Kr
 
 Korean public data API gateway. An [MCP](https://modelcontextprotocol.io) server that lets any MCP client discover, inspect, and call 80,000+ APIs on [data.go.kr](https://www.data.go.kr).
 
@@ -26,6 +26,22 @@ dotnet tool install -g FieldCure.Mcp.PublicData.Kr
 3. Subscribe to each individual API you want to query
    (조회하려는 개별 API도 각각 활용신청 필요)
 
+## API key resolution
+
+The server resolves the data.go.kr `serviceKey` lazily on the first tool call using the chain
+defined in [ADR-001](https://github.com/fieldcure/fieldcure-assiststudio/blob/main/docs/adr/ADR-001-MCP-Credential-Management.md):
+
+1. `--api-key <value>` CLI arg (debug/manual only — not the recommended path)
+2. `DATA_GO_KR_API_KEY` environment variable (**primary**)
+3. `PUBLICDATA_API_KEY` environment variable (legacy — retained for backward compatibility)
+4. **MCP Elicitation** — if the client supports it, the server requests the key via an
+   in-session prompt. The resolved key is cached in memory for the session; it is never
+   persisted to disk by the server. On `401/403` the cache is invalidated and a re-elicit
+   is attempted (capped at 2 retries per session to prevent loops).
+5. **Soft-fail** — if none of the above yield a key, `tools/list` still works and each
+   tool returns a JSON error explaining that `DATA_GO_KR_API_KEY` must be set or that the
+   client must support MCP Elicitation.
+
 ### Claude Desktop
 
 ```json
@@ -34,7 +50,7 @@ dotnet tool install -g FieldCure.Mcp.PublicData.Kr
     "publicdata-kr": {
       "command": "fieldcure-mcp-publicdata-kr",
       "env": {
-        "PUBLICDATA_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
+        "DATA_GO_KR_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
       }
     }
   }
@@ -49,7 +65,7 @@ dotnet tool install -g FieldCure.Mcp.PublicData.Kr
     "publicdata-kr": {
       "command": "fieldcure-mcp-publicdata-kr",
       "env": {
-        "PUBLICDATA_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
+        "DATA_GO_KR_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
       }
     }
   }
@@ -65,16 +81,22 @@ Settings > MCP Servers > **Add Server**:
 | **Name** | `PublicData.Kr` |
 | **Command** | `fieldcure-mcp-publicdata-kr` |
 | **Arguments** | *(empty)* |
-| **Environment** | `PUBLICDATA_API_KEY` = your data.go.kr API key |
+| **Environment** | `DATA_GO_KR_API_KEY` = your data.go.kr API key *(optional — will prompt via Elicitation if unset)* |
 | **Description** | *(auto-filled on first connection)* |
 
 ## Configuration
 
 | Variable | Required | Default | Description |
 |----------|:--------:|---------|-------------|
-| `PUBLICDATA_API_KEY` | **Yes** | — | data.go.kr API key (인증키) |
+| `DATA_GO_KR_API_KEY` | — | — | data.go.kr API key (인증키). If unset, the server will prompt via MCP Elicitation. |
+| `PUBLICDATA_API_KEY` | — | — | Legacy alias for `DATA_GO_KR_API_KEY`. |
 | `PUBLICDATA_TIMEOUT_SECONDS` | — | 30 | Per-request timeout |
 | `PUBLICDATA_MAX_RESPONSE_LENGTH` | — | 50000 | Max response body length |
+
+> **Naming note:** the API key follows the external service naming convention
+> (`DATA_GO_KR_API_KEY`), while server-local configuration uses the `PUBLICDATA_` prefix.
+> This keeps the key aligned with data.go.kr's own documentation so users don't have to
+> configure it twice, while local tunables stay grouped under a single package namespace.
 
 ## Requirements
 

@@ -9,6 +9,7 @@ Korean public data API gateway. A [Model Context Protocol (MCP)](https://modelco
 
 - **3 tools** — search APIs by keyword, inspect parameters/response fields, call any data.go.kr API
 - **Automatic serviceKey injection** — the API key is added to every request; never leaked to the LLM
+- **Lazy key resolution** — env var → MCP Elicitation → soft-fail chain (no hard-fail on startup). Hosts that support [MCP Elicitation](https://modelcontextprotocol.io/specification/2025-06-18/server/elicitation) can prompt the user for the key on first use; on upstream `401/403` or `SERVICE_KEY_IS_NOT_REGISTERED` the cached key is invalidated and a re-elicit is attempted (session cap: 2 re-elicits)
 - **XML → JSON normalization** — strips the `response/header/body/items` wrapper, returns clean JSON
 - **Error code mapping** — translates data.go.kr error codes into Korean guidance messages the LLM can relay directly
 - **SSRF protection** — domain whitelist limits calls to approved government hosts
@@ -48,6 +49,64 @@ dotnet build
 
 - [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 
+## Authentication
+
+This server requires a **data.go.kr API key** (공공데이터포털 인증키). Key resolution is
+lazy (on first tool call) and follows the [FieldCure MCP Credential ADR](https://github.com/fieldcure/fieldcure-assiststudio/blob/main/docs/ADR-001-MCP-Credential-Management.md):
+
+1. **Environment variable** — `DATA_GO_KR_API_KEY` (canonical) or `PUBLICDATA_API_KEY` (legacy alias)
+2. **MCP Elicitation** — if no env var is found, the server requests the key interactively
+   on the first tool call (requires a client that supports MCP Elicitation — e.g. Claude
+   Code ≥ 2.1.76, AssistStudio). The resolved key is cached in process memory for the
+   session lifetime and is never written to disk by the server.
+3. **Soft-fail** — if both paths fail, `tools/list` still works and tool calls return a
+   structured error message asking the user to set the env var.
+
+`--api-key <value>` is also accepted as a CLI arg but is intended for manual testing only,
+not as a supported configuration path.
+
+### Setup by host
+
+**Claude Code / Claude Desktop** — add the key to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "publicdata-kr": {
+      "command": "fieldcure-mcp-publicdata-kr",
+      "env": {
+        "DATA_GO_KR_API_KEY": "<your-key>"
+      }
+    }
+  }
+}
+```
+
+On Claude Code (≥ 2.1.76), if the env var is omitted the server prompts for the key via
+Elicitation on first use.
+
+**AssistStudio** — the key is requested via Elicitation on first use and stored in Windows
+PasswordVault for subsequent launches; the host then injects it as an env var when
+starting the server.
+
+**Docker / CI** — pass the key as a standard environment variable:
+
+```bash
+docker run -e DATA_GO_KR_API_KEY=<your-key> ...
+```
+
+### Key validation and re-elicitation
+
+If the server receives an HTTP 401/403 or a `resultCode=22` / `SERVICE_KEY_IS_NOT_REGISTERED_ERROR`
+body from data.go.kr, it invalidates the cached key and re-requests via Elicitation
+(session cap: 2 re-elicits per `ApiKeyResolver` lifetime). After exhausting retries, the
+tool returns a soft-fail error message.
+
+> **Note:** On data.go.kr an HTTP 401 can mean either an invalid key *or* an API that you
+> have not applied for (활용신청). If a re-elicitation prompt appears right after calling
+> an API you haven't subscribed to, entering the same key will produce the final error
+> envelope with details — at that point visit the API's data.go.kr page and apply for access.
+
 ## Configuration
 
 ### Claude Desktop
@@ -60,12 +119,21 @@ Add to `claude_desktop_config.json`:
     "publicdata-kr": {
       "command": "fieldcure-mcp-publicdata-kr",
       "env": {
-        "PUBLICDATA_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
+        "DATA_GO_KR_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
       }
     }
   }
 }
 ```
+
+### Claude Code (v2.1.76+)
+
+```bash
+claude mcp add publicdata-kr -- fieldcure-mcp-publicdata-kr
+```
+
+Claude Code supports MCP Elicitation, so `DATA_GO_KR_API_KEY` may be omitted — the
+server will prompt for the key on first tool use.
 
 ### VS Code (Copilot)
 
@@ -77,7 +145,7 @@ Add to `.vscode/mcp.json`:
     "publicdata-kr": {
       "command": "fieldcure-mcp-publicdata-kr",
       "env": {
-        "PUBLICDATA_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
+        "DATA_GO_KR_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
       }
     }
   }
@@ -96,7 +164,7 @@ Add to `.vscode/mcp.json`:
         "--project", "C:\\path\\to\\fieldcure-mcp-publicdata\\src\\FieldCure.Mcp.PublicData.Kr"
       ],
       "env": {
-        "PUBLICDATA_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
+        "DATA_GO_KR_API_KEY": "YOUR_DATA_GO_KR_API_KEY"
       }
     }
   }
@@ -112,7 +180,7 @@ Settings > MCP Servers > **Add Server**:
 | **Name** | `PublicData.Kr` |
 | **Command** | `fieldcure-mcp-publicdata-kr` |
 | **Arguments** | *(empty)* |
-| **Environment** | `PUBLICDATA_API_KEY` = your data.go.kr API key |
+| **Environment** | `DATA_GO_KR_API_KEY` = your data.go.kr API key *(optional — AssistStudio can prompt via Elicitation if unset)* |
 | **Description** | *(auto-filled on first connection)* |
 
 ## Tools
@@ -181,11 +249,19 @@ When a data.go.kr API returns an error, the server translates it into a Korean g
 
 | Variable | Required | Default | Description |
 |----------|:--------:|---------|-------------|
-| `PUBLICDATA_API_KEY` | **Yes** | — | data.go.kr API key (인증키) |
+| `DATA_GO_KR_API_KEY` | — | — | data.go.kr API key (인증키). If unset, the server requests it via MCP Elicitation on first tool call. |
+| `PUBLICDATA_API_KEY` | — | — | Legacy alias for `DATA_GO_KR_API_KEY`. Still accepted; prefer the canonical name for new setups. |
 | `PUBLICDATA_TIMEOUT_SECONDS` | — | 30 | Per-request timeout |
 | `PUBLICDATA_MAX_RESPONSE_LENGTH` | — | 50000 | Maximum response body length in characters |
 
-CLI args (`--api-key`, `--timeout`, `--max-response-length`) override environment variables.
+CLI args (`--api-key`, `--timeout`, `--max-response-length`) override environment variables
+and are intended for manual testing only — `DATA_GO_KR_API_KEY` and Elicitation are the
+supported paths.
+
+> **Naming note:** the API key follows the external service naming convention
+> (`DATA_GO_KR_API_KEY`), while server-local configuration uses the `PUBLICDATA_` prefix.
+> This keeps the key aligned with data.go.kr's own documentation so users don't have to
+> configure it twice, while local tunables stay grouped under a single package namespace.
 
 ## Security
 
@@ -198,16 +274,19 @@ CLI args (`--api-key`, `--timeout`, `--max-response-length`) override environmen
 
 ```
 src/FieldCure.Mcp.PublicData.Kr/
-├── Program.cs                    # MCP server entry point (stdio)
+├── Program.cs                       # MCP server entry point (stdio); no startup hard-fail
 ├── Services/
-│   ├── PublicDataHttpClient.cs   # HTTP proxy with serviceKey injection
-│   ├── DomainWhitelist.cs        # SSRF prevention via host whitelist
-│   ├── ResponseNormalizer.cs     # XML→JSON conversion, wrapper removal
-│   └── ErrorCodeMapper.cs       # Error code → Korean guidance messages
+│   ├── ApiKeyResolver.cs            # env var → MCP Elicitation → soft-fail chain + cache + retry cap
+│   ├── InvalidApiKeyException.cs    # Signals upstream auth rejection (HTTP 401/403 or body error)
+│   ├── KeyedCall.cs                 # Tool-side resolve → run → invalidate → retry helper
+│   ├── PublicDataHttpClient.cs      # HTTP proxy with serviceKey injection + auth-error detection
+│   ├── DomainWhitelist.cs           # SSRF prevention via host whitelist
+│   ├── ResponseNormalizer.cs        # XML→JSON conversion, wrapper removal
+│   └── ErrorCodeMapper.cs           # Error code → Korean guidance messages
 └── Tools/
-    ├── DiscoverApiTool.cs        # discover_api
-    ├── DescribeApiTool.cs        # describe_api
-    └── CallApiTool.cs            # call_api
+    ├── DiscoverApiTool.cs           # discover_api
+    ├── DescribeApiTool.cs           # describe_api
+    └── CallApiTool.cs               # call_api
 ```
 
 ## Development

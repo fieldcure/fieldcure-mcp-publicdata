@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <Version>0.2.0</Version>
+    <Version>1.0.0</Version>
     <PackageId>FieldCure.Mcp.PublicData.Kr</PackageId>
 
     <Authors>Jong Hyun Kim</Authors>
@@ -23,7 +23,7 @@
     <PackageType>McpServer</PackageType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>Logo.png</PackageIcon>
-    <PackageReleaseNotes>v0.2.0: Centralize JsonSerializerOptions into McpJson.Options shared class; docs and CI improvements.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.0 (ADR-001 Phase 1): Lazy API key resolution (env var → MCP Elicitation → soft-fail). Env var renamed DATA_GO_KR_API_KEY (PUBLICDATA_API_KEY retained as legacy alias). Server no longer hard-fails on missing key — tools/list always responds, per-tool calls return a typed error envelope pointing at the env var. On HTTP 401/403 the cached key is invalidated and a single retry is attempted (session-level re-elicit cap of 2 to prevent loops).</PackageReleaseNotes>
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fieldcure-mcp-publicdata-kr</ToolCommandName>
