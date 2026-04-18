@@ -37,9 +37,7 @@ builder.Services
             Name = "fieldcure-mcp-publicdata-kr",
             Title = "FieldCure PublicData.Kr",
             Description = "Korean public data gateway — data.go.kr (80,000+ APIs)",
-            Version = typeof(Program).Assembly
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                ?.InformationalVersion ?? "0.0.0",
+            Version = GetPublicVersion(),
         };
     })
     .WithStdioServerTransport()
@@ -76,4 +74,23 @@ static string? ResolveCliArg(string[] args, string cliFlag)
             return args[i + 1];
     }
     return null;
+}
+
+/// <summary>
+/// Returns the user-facing server version string. Uses
+/// <see cref="AssemblyInformationalVersionAttribute"/> as the source so
+/// SemVer prerelease suffixes are preserved (e.g. <c>1.0.0-beta</c>), but
+/// strips the <c>+&lt;build-metadata&gt;</c> commit-SHA suffix that the
+/// .NET SDK auto-appends — that hash is only useful to developers and
+/// just adds noise in end-user UIs. The full versioned attribute is still
+/// available on the assembly for diagnostic logs and debuggers.
+/// </summary>
+static string GetPublicVersion()
+{
+    var info = typeof(Program).Assembly
+        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+        ?.InformationalVersion;
+    if (string.IsNullOrEmpty(info)) return "0.0.0";
+    var plus = info.IndexOf('+');
+    return plus > 0 ? info[..plus] : info;
 }
