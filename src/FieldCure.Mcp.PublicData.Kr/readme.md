@@ -74,7 +74,15 @@ defined in [ADR-001](https://github.com/fieldcure/fieldcure-assiststudio/blob/ma
 
 ### AssistStudio
 
-Settings > MCP Servers > **Add Server**:
+> **Install the dotnet tool first.** AssistStudio does not auto-install external MCP
+> servers. Without the `fieldcure-mcp-publicdata-kr` command on PATH the connection
+> fails with a generic "server shut down unexpectedly" message.
+>
+> ```bash
+> dotnet tool install -g FieldCure.Mcp.PublicData.Kr
+> ```
+
+Then: Settings > MCP Servers > **Add Server**:
 
 | Field | Value |
 |-------|-------|

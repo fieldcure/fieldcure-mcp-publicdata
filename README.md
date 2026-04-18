@@ -173,7 +173,18 @@ Add to `.vscode/mcp.json`:
 
 ### AssistStudio
 
-Settings > MCP Servers > **Add Server**:
+> **Install the dotnet tool first.** AssistStudio does not auto-install external MCP
+> servers (only built-in ones are managed via the AssistStudio auto-update path).
+> The `fieldcure-mcp-publicdata-kr` command must be on PATH before you add the server,
+> otherwise the connection fails with a generic "server shut down unexpectedly" message.
+>
+> ```bash
+> dotnet tool install -g FieldCure.Mcp.PublicData.Kr
+> # later, to upgrade:
+> dotnet tool update -g FieldCure.Mcp.PublicData.Kr
+> ```
+
+Then: Settings > MCP Servers > **Add Server**:
 
 | Field | Value |
 |-------|-------|
