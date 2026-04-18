@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 // Register EUC-KR and other legacy encodings used by some government APIs.
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-// Resolve API key: CLI arg > env var (required)
-var apiKey = ResolveArg(args, "--api-key", "PUBLICDATA_API_KEY")
-    ?? throw new InvalidOperationException(
-        "PUBLICDATA_API_KEY is required. " +
-        "Set it as an environment variable or pass --api-key <key>.");
+// ADR-001: API key resolution is lazy. The server starts successfully even without
+// a key configured. Tools resolve the key on first call via ApiKeyResolver, which
+// checks: CLI arg (--api-key) → env var (DATA_GO_KR_API_KEY, legacy PUBLICDATA_API_KEY)
+// → MCP Elicitation → soft-fail. Callers never block tools/list on credentials.
+var cliKey = ResolveCliArg(args, "--api-key");
 
 var timeoutSeconds = int.TryParse(
     ResolveArg(args, "--timeout", "PUBLICDATA_TIMEOUT_SECONDS"), out var t) ? t : 30;
@@ -28,7 +28,8 @@ builder.Logging.AddConsole(options =>
 });
 
 builder.Services
-    .AddSingleton(new PublicDataHttpClient(apiKey, timeoutSeconds, maxResponseLength))
+    .AddSingleton(new ApiKeyResolver(cliKey))
+    .AddSingleton(new PublicDataHttpClient(timeoutSeconds, maxResponseLength))
     .AddMcpServer(options =>
     {
         options.ServerInfo = new()
@@ -61,4 +62,18 @@ static string? ResolveArg(string[] args, string cliFlag, string envVar)
 
     var env = Environment.GetEnvironmentVariable(envVar);
     return string.IsNullOrWhiteSpace(env) ? null : env;
+}
+
+/// <summary>
+/// Resolves a CLI-only arg (no env var fallback). Used for the API key: env var
+/// lookup is handled by <see cref="ApiKeyResolver"/> at tool invocation time.
+/// </summary>
+static string? ResolveCliArg(string[] args, string cliFlag)
+{
+    for (int i = 0; i < args.Length - 1; i++)
+    {
+        if (args[i] == cliFlag)
+            return args[i + 1];
+    }
+    return null;
 }

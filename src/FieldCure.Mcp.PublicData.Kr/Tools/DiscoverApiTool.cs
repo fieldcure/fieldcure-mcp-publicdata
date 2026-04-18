@@ -22,7 +22,9 @@ public static class DiscoverApiTool
         "Returns API names, descriptions, providers, and service URLs. " +
         "Use this when the user asks about Korean government data.")]
     public static async Task<string> DiscoverApi(
+        McpServer server,
         PublicDataHttpClient client,
+        ApiKeyResolver resolver,
         [Description("Search keyword in Korean or English (e.g., '미세먼지', '부동산', '사업자')")]
         string query,
         [Description("Page number (default: 1)")]
@@ -38,7 +40,16 @@ public static class DiscoverApiTool
 
             // Fetch more than requested to account for duplicates after de-duplication
             var fetchSize = Math.Min(pageSize * 3, 100);
-            var rawJson = await client.SearchCatalogAsync(query, page, fetchSize, cancellationToken);
+
+            var rawJson = await KeyedCall.RunAsync(
+                server,
+                resolver,
+                apiKey => client.SearchCatalogAsync(apiKey, query, page, fetchSize, cancellationToken),
+                cancellationToken);
+
+            // If KeyedCall surfaced a soft-fail/invalid-key error, pass it through as-is.
+            if (LooksLikeErrorEnvelope(rawJson))
+                return rawJson;
 
             return FormatResults(rawJson, pageSize);
         }
@@ -49,6 +60,24 @@ public static class DiscoverApiTool
         catch (Exception ex)
         {
             return JsonSerializer.Serialize(new { error = ex.Message }, McpJson.Options);
+        }
+    }
+
+    /// <summary>
+    /// Heuristic: does this JSON look like a <c>{ "error": "..." }</c> envelope produced
+    /// by the soft-fail / invalid-key retry path?
+    /// </summary>
+    static bool LooksLikeErrorEnvelope(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return false;
+        try
+        {
+            var root = JsonNode.Parse(json);
+            return root?["error"] is not null && root["data"] is null;
+        }
+        catch
+        {
+            return false;
         }
     }
 

@@ -21,7 +21,9 @@ public static class DescribeApiTool
         "Get the request parameters and response schema of a specific data.go.kr API. " +
         "Use the serviceId from discover_api results.")]
     public static async Task<string> DescribeApi(
+        McpServer server,
         PublicDataHttpClient client,
+        ApiKeyResolver resolver,
         [Description("Service ID (list_id) from discover_api results")]
         string serviceId,
         CancellationToken cancellationToken = default)
@@ -30,7 +32,16 @@ public static class DescribeApiTool
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(serviceId);
 
-            var rawJson = await client.GetServiceDetailAsync(serviceId, cancellationToken);
+            var rawJson = await KeyedCall.RunAsync(
+                server,
+                resolver,
+                apiKey => client.GetServiceDetailAsync(apiKey, serviceId, cancellationToken),
+                cancellationToken);
+
+            // If KeyedCall surfaced a soft-fail/invalid-key error, pass it through as-is.
+            if (LooksLikeErrorEnvelope(rawJson))
+                return rawJson;
+
             return FormatSchema(rawJson, serviceId);
         }
         catch (OperationCanceledException)
@@ -40,6 +51,25 @@ public static class DescribeApiTool
         catch (Exception ex)
         {
             return JsonSerializer.Serialize(new { error = ex.Message }, McpJson.Options);
+        }
+    }
+
+    /// <summary>
+    /// Heuristic: does this JSON look like a <c>{ "error": "..." }</c> envelope produced
+    /// by the soft-fail / invalid-key retry path? If so we must not try to re-parse it
+    /// as a catalog response.
+    /// </summary>
+    static bool LooksLikeErrorEnvelope(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return false;
+        try
+        {
+            var root = JsonNode.Parse(json);
+            return root?["error"] is not null && root["data"] is null;
+        }
+        catch
+        {
+            return false;
         }
     }
 

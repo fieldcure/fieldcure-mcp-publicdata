@@ -21,7 +21,9 @@ public static class CallApiTool
         "If the call fails with ACCESS_DENIED, the user needs to apply for access to this " +
         "specific API at data.go.kr.")]
     public static async Task<string> CallApi(
+        McpServer server,
         PublicDataHttpClient client,
+        ApiKeyResolver resolver,
         [Description("Full endpoint URL from describe_api results")]
         string url,
         [Description("Query parameters as JSON object, e.g. {\"stationName\": \"종로구\", \"dataTerm\": \"DAILY\"}")]
@@ -55,8 +57,11 @@ public static class CallApiTool
 
             maxResults = Math.Clamp(maxResults, 1, 1000);
 
-            var result = await client.CallApiAsync(uri, queryParams, maxResults, cancellationToken);
-            return result;
+            return await KeyedCall.RunAsync(
+                server,
+                resolver,
+                apiKey => client.CallApiAsync(apiKey, uri, queryParams, maxResults, cancellationToken),
+                cancellationToken);
         }
         catch (OperationCanceledException)
         {
