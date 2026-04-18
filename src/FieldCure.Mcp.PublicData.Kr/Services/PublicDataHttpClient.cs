@@ -10,8 +10,18 @@ namespace FieldCure.Mcp.PublicData.Kr.Services;
 /// The API key (<c>serviceKey</c>) is supplied per call by the tool, resolved via
 /// <see cref="ApiKeyResolver"/> following ADR-001 (env var → Elicitation). The client
 /// enforces a response size limit, masks the API key in any error output, and throws
-/// <see cref="InvalidApiKeyException"/> on upstream 401/403 so tools can invalidate
-/// and retry.
+/// <see cref="InvalidApiKeyException"/> when the upstream reports an authentication
+/// failure — either via HTTP 401/403 (common for completely invalid keys) or via a
+/// normalized body signal (<c>resultCode=22</c>, <c>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</c>,
+/// <c>UNAUTHORIZED_KEY</c>, common when the key is rejected at HTTP 200). Both paths
+/// trigger <see cref="ApiKeyResolver.Invalidate"/> and a retry in the tool layer.
+///
+/// Note: HTTP 401/403 is ambiguous on data.go.kr — it also surfaces for per-API
+/// subscription failures when the key itself is valid (e.g. calling an API that the
+/// user has not applied for). Treating it as an invalid-key signal may cost one
+/// unnecessary re-elicit in that case, which we accept because the alternative
+/// (missing auto-recovery for genuinely invalid keys that return 401) was worse in
+/// practice. Refinement via body-content inspection on 401/403 is a Phase 1.1 follow-up.
 /// </summary>
 public sealed class PublicDataHttpClient
 {
@@ -147,7 +157,8 @@ public sealed class PublicDataHttpClient
 
     /// <summary>
     /// Throws <see cref="InvalidApiKeyException"/> when the upstream status code indicates
-    /// the supplied <c>serviceKey</c> was rejected (401/403).
+    /// the supplied <c>serviceKey</c> was rejected (401/403). See the class summary for the
+    /// 401/403 ambiguity tradeoff.
     /// </summary>
     static void ThrowIfInvalidKey(HttpResponseMessage response)
     {
