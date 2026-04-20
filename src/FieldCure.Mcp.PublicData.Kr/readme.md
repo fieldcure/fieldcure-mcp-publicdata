@@ -2,6 +2,8 @@
 
 Korean public data API gateway. An [MCP](https://modelcontextprotocol.io) server that lets any MCP client discover, inspect, and call 80,000+ APIs on [data.go.kr](https://www.data.go.kr).
 
+<!-- mcp-name: io.github.fieldcure/publicdata-kr -->
+
 ## Tools
 
 | Tool | Description |

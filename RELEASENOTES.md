@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.0.1 (2026-04-20)
+
+- Update MCP package metadata to the latest `server.json` format for NuGet and VS Code integration.
+
 ## v1.0.0 (2026-04-18)
 
 **ADR-001 Phase 1: Lazy credential resolution.** Pilot implementation of the FieldCure MCP credential management ADR. Non-breaking for existing users who set an env var.
