@@ -19,8 +19,11 @@ public static class DiscoverApiTool
     [McpServerTool(Name = "discover_api")]
     [Description(
         "Search Korean public data APIs on data.go.kr by keyword. " +
-        "Returns API names, descriptions, providers, and service URLs. " +
-        "Use this when the user asks about Korean government data.")]
+        "Returns API names, descriptions, providers, and serviceIds. " +
+        "Use this when the user asks about Korean government data. " +
+        "WORKFLOW: the returned serviceId is the input for describe_api (not call_api). " +
+        "Always follow up with describe_api to get the actual endpoint url and parameter " +
+        "schema before calling call_api.")]
     public static async Task<string> DiscoverApi(
         McpServer server,
         PublicDataHttpClient client,

@@ -17,16 +17,29 @@ public static class CallApiTool
     /// </summary>
     [McpServerTool(Name = "call_api")]
     [Description(
-        "Call a Korean public data API. The API key (serviceKey) is automatically injected. " +
+        "Call a Korean public data API with automatic serviceKey injection. " +
+        "WORKFLOW: always discover_api → describe_api → call_api. Do NOT call this tool " +
+        "with a serviceId from discover_api; call_api takes a full 'url' string returned " +
+        "by describe_api under operations[].url, NOT a serviceId. " +
+        "The 'params' argument is a JSON STRING (not an object), " +
+        "e.g. params=\"{\\\"pageNo\\\":\\\"1\\\",\\\"numOfRows\\\":\\\"5\\\"}\". " +
         "If the call fails with ACCESS_DENIED, the user needs to apply for access to this " +
         "specific API at data.go.kr.")]
     public static async Task<string> CallApi(
         McpServer server,
         PublicDataHttpClient client,
         ApiKeyResolver resolver,
-        [Description("Full endpoint URL from describe_api results")]
+        [Description(
+            "Full endpoint URL from describe_api's operations[].url. " +
+            "Do NOT pass a serviceId / service_id from discover_api — that is for describe_api, " +
+            "not for this tool. A valid url looks like " +
+            "'http://apis.data.go.kr/1471000/MdcinClincTestInfoService02/getMdcinClincTestInfoList02'.")]
         string url,
-        [Description("Query parameters as JSON object, e.g. {\"stationName\": \"종로구\", \"dataTerm\": \"DAILY\"}")]
+        [Description(
+            "Query parameters as a JSON STRING (serialized object, not a raw object), " +
+            "with string values only. Example: " +
+            "'{\"pageNo\":\"1\",\"numOfRows\":\"5\",\"type\":\"json\"}'. " +
+            "Parameter names come from describe_api's request_parameters list — do not guess.")]
         string? @params = null,
         [Description("Max items to return (default: 20, prevents context overflow)")]
         int maxResults = 20,

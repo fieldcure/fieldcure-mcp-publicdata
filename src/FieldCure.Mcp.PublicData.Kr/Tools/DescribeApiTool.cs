@@ -19,7 +19,10 @@ public static class DescribeApiTool
     [McpServerTool(Name = "describe_api")]
     [Description(
         "Get the request parameters and response schema of a specific data.go.kr API. " +
-        "Use the serviceId from discover_api results.")]
+        "Input is the serviceId from discover_api results. " +
+        "Returns operations[].url and request_parameters[] — these are the required " +
+        "inputs for call_api. Always call this between discover_api and call_api; " +
+        "never pass a serviceId directly to call_api.")]
     public static async Task<string> DescribeApi(
         McpServer server,
         PublicDataHttpClient client,
