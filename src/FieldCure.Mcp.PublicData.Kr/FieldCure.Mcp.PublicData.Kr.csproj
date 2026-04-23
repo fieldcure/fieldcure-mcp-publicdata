@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackageId>FieldCure.Mcp.PublicData.Kr</PackageId>
 
     <Authors>Jong Hyun Kim</Authors>
@@ -23,7 +23,7 @@
     <PackageType>McpServer</PackageType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>Logo.png</PackageIcon>
-    <PackageReleaseNotes>v1.0.1: Update MCP package metadata to the latest server.json format for NuGet and VS Code integration.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.2: Harden tool descriptions so models driving invoke_tool-style dispatch (no per-step sub-agent) pick correct arguments — call_api spells out the discover_api→describe_api→call_api workflow, forbids serviceId-as-input, and documents params as a JSON string with a concrete example. No runtime behaviour change.</PackageReleaseNotes>
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fieldcure-mcp-publicdata-kr</ToolCommandName>

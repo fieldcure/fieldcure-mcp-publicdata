@@ -1,5 +1,19 @@
 # Release Notes
 
+## v1.0.2 (2026-04-22)
+
+### Changed
+
+- **`call_api` description** — rewritten to spell out the `discover_api` → `describe_api` → `call_api` workflow, explicitly forbid passing a serviceId from `discover_api` as input, and document that the `params` argument is a JSON STRING (not an object) with a concrete example. The per-parameter `url` and `params` descriptions repeat those constraints at the argument level so schema validators surface them.
+- **`discover_api` description** — clarifies that the returned `serviceId` is the input for `describe_api`, not for `call_api`, and that `describe_api` must be called before `call_api`.
+- **`describe_api` description** — states that it returns `operations[].url` and `request_parameters[]`, which are the required inputs for `call_api`, and that a serviceId must never be passed directly to `call_api`.
+
+### Context
+
+External hosts (AssistStudio) now dispatch MCP tools through a `search_tools` + `invoke_tool` pair rather than a per-step sub-agent. In that flow the main conversation does not automatically loop `discover_api` → `describe_api`, so models sometimes called `call_api` with a guessed schema (`service_id` and a raw `parameters` object) and hit a generic server failure on every call. Baking the workflow and parameter shape into the tool descriptions lets the model choose correct arguments without an extra schema-discovery round-trip — no code behaviour changed.
+
+---
+
 ## v1.0.1 (2026-04-20)
 
 - Update MCP package metadata to the latest `server.json` format for NuGet and VS Code integration.

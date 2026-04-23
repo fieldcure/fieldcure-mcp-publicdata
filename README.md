@@ -241,7 +241,7 @@ Call a Korean public data API. The serviceKey is automatically injected — neve
 | Parameter | Type | Required | Description |
 |-----------|------|:--------:|-------------|
 | `url` | string | Yes | Full endpoint URL from `describe_api` results |
-| `params` | string | — | Query parameters as JSON object (e.g., `{"stationName": "종로구"}`) |
+| `params` | string | — | Query parameters as a JSON **string** (not a raw object), e.g. `'{"stationName":"종로구","dataTerm":"DAILY"}'`. Parameter names must come from `describe_api`'s `request_parameters` — do not guess. |
 | `maxResults` | int | — | Max items to return (default: 20, prevents context overflow) |
 
 ## Error Code Mapping
