@@ -1,5 +1,15 @@
 # Release Notes
 
+## v1.0.3 (2026-05-25)
+
+### Internal
+
+- **`.mcp/server.json` declares 3 environment variables** for MCP Server Registry discovery: `DATA_GO_KR_API_KEY` (secret, optional — soft-fails to elicitation per ADR-001), `PUBLICDATA_TIMEOUT_SECONDS` (default `30`), `PUBLICDATA_MAX_RESPONSE_LENGTH` (default `50000`). Pure descriptor change — runtime behaviour and ADR-001 credential resolution chain (env → Elicit, max 2 re-elicits) are unaffected.
+- **Pack-time `VerifyServerJsonVersion` MSBuild target** catches drift between csproj `<Version>` and the two version fields in `.mcp/server.json` before producing a stale nupkg.
+- **`publish-mcp-registry.yml` GitHub Actions workflow** (manual `workflow_dispatch`) drives the MCP Server Registry update via GitHub OIDC. Run AFTER NuGet indexing because the registry validates the published nupkg README's `mcp-name` line.
+
+---
+
 ## v1.0.2 (2026-04-22)
 
 ### Changed

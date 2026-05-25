@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <PackageId>FieldCure.Mcp.PublicData.Kr</PackageId>
 
     <Authors>Jong Hyun Kim</Authors>
@@ -23,7 +23,7 @@
     <PackageType>McpServer</PackageType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>Logo.png</PackageIcon>
-    <PackageReleaseNotes>v1.0.2: Harden tool descriptions so models driving invoke_tool-style dispatch (no per-step sub-agent) pick correct arguments — call_api spells out the discover_api→describe_api→call_api workflow, forbids serviceId-as-input, and documents params as a JSON string with a concrete example. No runtime behaviour change.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.3: Metadata-only patch. .mcp/server.json now declares 3 environment variables for MCP Server Registry discovery — DATA_GO_KR_API_KEY (secret), PUBLICDATA_TIMEOUT_SECONDS (default 30), PUBLICDATA_MAX_RESPONSE_LENGTH (default 50000). Pure descriptor change — runtime behaviour unchanged; ADR-001 credential resolution chain (env → Elicit, max 2 re-elicits) is unaffected. Pack-time VerifyServerJsonVersion MSBuild target catches drift between csproj &lt;Version&gt; and the two version fields in .mcp/server.json. publish-mcp-registry.yml GitHub Actions workflow (manual workflow_dispatch) drives the MCP Server Registry update via OIDC.</PackageReleaseNotes>
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fieldcure-mcp-publicdata-kr</ToolCommandName>
